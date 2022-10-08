@@ -156,7 +156,7 @@ input[type="submit"] {
 
 .button-tools:hover {
   color: #fff;
-   border: 1px solid #c9c8e8;
+  border: 1px solid #c9c8e8;
 }
 
 .button-tools::before {
@@ -167,7 +167,7 @@ input[type="submit"] {
   top: 0;
   width: 100%;
   height: 100%;
-  transform: translateX(-118px);
+  transform: translateX(-100%);
   z-index: -1;
   transition: 0.4s;
 }
