@@ -13,11 +13,11 @@ body {
   width: min(100% - 1rem, 810px);
   margin-inline: auto;
   padding-top: 10px;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .wrap {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 table, th, td {
