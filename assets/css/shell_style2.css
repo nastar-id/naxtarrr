@@ -141,6 +141,7 @@ body.dark .infomin {
   border: 2px solid #000;
   text-align: center;
   overflow-x: auto;
+  z-index: 10;
 }
 
 @media (max-width: 812px) {
