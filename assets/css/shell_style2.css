@@ -140,6 +140,7 @@ body.dark .infomin {
   margin-bottom: 15px;
   border: 2px solid #000;
   text-align: center;
+  overflow-x: auto;
 }
 
 @media (max-width: 812px) {
