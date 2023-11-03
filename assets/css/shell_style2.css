@@ -220,6 +220,7 @@ table tbody td {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 15;
 }
 
 .menu label[for=menu] {
@@ -240,6 +241,7 @@ table tbody td {
   background-color: #000;
   padding: 10px 15px;
   text-align: center;
+  z-index: 15;
 }
 
 .menu .menu-list * {
