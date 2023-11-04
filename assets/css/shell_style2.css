@@ -114,6 +114,7 @@ textarea {
   row-gap: 5px;
   font-size: 15px;
   order: 1;
+  overflow-x: auto;
 }
 
 @media (max-width: 812px) {
