@@ -24,15 +24,17 @@ a h5:hover {
     color: var(--primary) !important;
 }
 
-.navbar .navbar-brand {
+.header {
     display: block;
-    margin: auto;
+    text-align: center;
+    text-decoration: none;
+    margin: 25px auto;
     font-family: 'Macondo', cursive;
     color: #fff;
     font-size: 30px !important;
 }
 
-.navbar .navbar-brand:hover {
+.header:hover {
     color: var(--primary);
 }
 
@@ -71,18 +73,38 @@ div.form-group button:hover {
 
 .dataTables_wrapper.dt-bootstrap5.no-footer .row:first-child {
     margin-bottom: 25px;
+    overflow-x: hidden;
+}
+
+.table-responsive .dataTables_length {
+    text-align: left !important;
+}
+
+.table-responsive .dataTables_length label {
+    font-size: 0;
+}
+
+.table-responsive .dataTables_length label select {
+    font-size: 14px;
 }
 
 .dataTables_wrapper.dt-bootstrap5.no-footer .row:nth-child(2) {
     overflow-x: auto;
 }
 
-.dataTables_wrapper.dt-bootstrap5.no-footer .row:last-child {
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:nth-child(3) {
     margin-top: 25px;
 }
 
 .dataTables_info {
     display: none;
+}
+
+
+div.dataTables_wrapper div.dataTables_paginate {
+    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 table thead th,
@@ -94,7 +116,7 @@ table tbody td {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 1048;
+    z-index: 102;
 }
 
 .menu-options {
@@ -112,21 +134,8 @@ table tbody td {
     font-size: 18px;
 }
 
-.offcanvas-body,
-.offcanvas-header {
-    background-color: #000;
-    border: 1px solid var(--primary);
-}
-
-.offcanvas {
-    margin-top: 10%;
-    height: 62%;
-    box-shadow: 0px 0px 10px 0px var(--primary);
-    margin-left: 3%;
-}
-
 nav[aria-label="breadcrumb"] {
-    z-index: 1049;
+    z-index: 109;
 }
 
 .breadcrumb {
@@ -134,7 +143,7 @@ nav[aria-label="breadcrumb"] {
     background-color: #6c757d;
     padding: 20px 15px;
     border-radius: 10px;
-    z-index: 1049;
+    z-index: 109;
 }
 
 .breadcrumb-item a {
@@ -143,17 +152,4 @@ nav[aria-label="breadcrumb"] {
 
 .breadcrumb .breadcrumb-item::before {
     color: rgb(187, 187, 187) !important;
-}
-
-
-div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-    justify-content: flex-start;
-}
-
-@media only screen and (max-width: 767.98px) {
-    .offcanvas {
-        width: 50%;
-        margin-top: 25%;
-        margin-left: 25%;
-    }
 }
