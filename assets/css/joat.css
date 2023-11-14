@@ -1,0 +1,159 @@
+:root {
+    --primary: rgb(242, 163, 226);
+}
+
+a {
+    color: #fff;
+}
+
+p>span {
+    color: #43C6AC;
+}
+
+th:hover {
+    color: var(--primary) !important;
+    cursor: default;
+}
+
+td a:hover,
+.folder:hover,
+a p:hover,
+label a:hover,
+td i,
+a h5:hover {
+    color: var(--primary) !important;
+}
+
+.navbar .navbar-brand {
+    display: block;
+    margin: auto;
+    font-family: 'Macondo', cursive;
+    color: #fff;
+    font-size: 30px !important;
+}
+
+.navbar .navbar-brand:hover {
+    color: var(--primary);
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-menu {
+    background-color: #6c757d;
+}
+
+.dropdown-menu .btn-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+div.form-group button:hover {
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary) !important;
+    border: 1px solid var(--primary);
+}
+
+.page-link {
+    background-color: transparent !important;
+    color: #fff;
+}
+
+.page-link:hover,
+.page-link:focus {
+    color: var(--primary);
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:first-child {
+    margin-bottom: 25px;
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:nth-child(2) {
+    overflow-x: auto;
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:last-child {
+    margin-top: 25px;
+}
+
+.dataTables_info {
+    display: none;
+}
+
+table thead th,
+table tbody td {
+  white-space: nowrap !important;
+}
+
+.menu {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1048;
+}
+
+.menu-options {
+    display: flex;
+    column-gap: 10px;
+    height: 100%;
+}
+
+.menu-options button:hover i,
+.menu-options a:hover i {
+    color: rgb(213, 84, 187)!important;
+}
+
+.menu-options i {
+    font-size: 18px;
+}
+
+.offcanvas-body,
+.offcanvas-header {
+    background-color: #000;
+    border: 1px solid var(--primary);
+}
+
+.offcanvas {
+    margin-top: 10%;
+    height: 62%;
+    box-shadow: 0px 0px 10px 0px var(--primary);
+    margin-left: 3%;
+}
+
+nav[aria-label="breadcrumb"] {
+    z-index: 1049;
+}
+
+.breadcrumb {
+    position: relative;
+    background-color: #6c757d;
+    padding: 20px 15px;
+    border-radius: 10px;
+    z-index: 1049;
+}
+
+.breadcrumb-item a {
+    color: #fff;
+}
+
+.breadcrumb .breadcrumb-item::before {
+    color: rgb(187, 187, 187) !important;
+}
+
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    justify-content: flex-start;
+}
+
+@media only screen and (max-width: 767.98px) {
+    .offcanvas {
+        width: 50%;
+        margin-top: 25%;
+        margin-left: 25%;
+    }
+}
