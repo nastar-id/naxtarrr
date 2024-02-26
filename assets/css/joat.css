@@ -1,0 +1,155 @@
+:root {
+    --primary: rgb(242, 163, 226);
+}
+
+a {
+    color: #fff;
+}
+
+p>span {
+    color: #43C6AC;
+}
+
+th:hover {
+    color: var(--primary) !important;
+    cursor: default;
+}
+
+td a:hover,
+.folder:hover,
+a p:hover,
+label a:hover,
+td i,
+a h5:hover {
+    color: var(--primary) !important;
+}
+
+.header {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    margin: 25px auto;
+    font-family: 'Macondo', cursive;
+    color: #fff;
+    font-size: 30px !important;
+}
+
+.header:hover {
+    color: var(--primary);
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-menu {
+    background-color: #6c757d;
+}
+
+.dropdown-menu .btn-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+div.form-group button:hover {
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary) !important;
+    border: 1px solid var(--primary);
+}
+
+.page-link {
+    background-color: transparent !important;
+    color: #fff;
+}
+
+.page-link:hover,
+.page-link:focus {
+    color: var(--primary);
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:first-child {
+    margin-bottom: 25px;
+    overflow-x: hidden;
+}
+
+.table-responsive .dataTables_length {
+    text-align: left !important;
+}
+
+.table-responsive .dataTables_length label {
+    font-size: 0;
+}
+
+.table-responsive .dataTables_length label select {
+    font-size: 14px;
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:nth-child(2) {
+    overflow-x: auto;
+}
+
+.dataTables_wrapper.dt-bootstrap5.no-footer .row:nth-child(3) {
+    margin-top: 25px;
+}
+
+.dataTables_info {
+    display: none;
+}
+
+
+div.dataTables_wrapper div.dataTables_paginate {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+table thead th,
+table tbody td {
+  white-space: nowrap !important;
+}
+
+.menu {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 102;
+}
+
+.menu-options {
+    display: flex;
+    column-gap: 10px;
+    height: 100%;
+}
+
+.menu-options button:hover i,
+.menu-options a:hover i {
+    color: rgb(213, 84, 187)!important;
+}
+
+.menu-options i {
+    font-size: 18px;
+}
+
+nav[aria-label="breadcrumb"] {
+    z-index: 109;
+}
+
+.breadcrumb {
+    position: relative;
+    background-color: #6c757d;
+    padding: 20px 15px;
+    border-radius: 10px;
+    z-index: 109;
+}
+
+.breadcrumb-item a {
+    color: #fff;
+}
+
+.breadcrumb .breadcrumb-item::before {
+    color: rgb(187, 187, 187) !important;
+}

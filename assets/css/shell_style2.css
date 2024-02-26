@@ -1,0 +1,284 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #ededed;
+  font-weight: 600;
+  font-size: 17px;
+  font-family: sans-serif;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+body.dark {
+  background: #333333;
+  color: #fff;
+}
+
+a {
+  text-decoration: none;
+  color: #2626b5;
+}
+
+a:hover {
+  color: #7272d0;
+}
+
+body.dark a {
+  color: #fff;
+}
+
+body.dark a:hover {
+  color: #e1e1e1;
+}
+
+.container {
+  width: calc(100% - 1rem);
+  margin: auto;
+}
+
+.card {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  border: 2px solid #000;
+  padding: 15px 10px;
+}
+
+body.dark .navigation,
+body.dark .card {
+  background: #5f5f5f !important;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+input {
+  display: block;
+  padding: 8px;
+  width: 100%;
+}
+
+body.dark input,
+body.dark textarea {
+  background: #464646;
+  color: #fff;
+}
+
+.label-form {
+  display: block;
+  margin-bottom: 5px;
+}
+
+textarea {
+  height: 400px;
+  width: 100%;
+  padding-inline: 12px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.home {
+  color: #000;
+  font-size: 30px;
+}
+
+.home:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.infomin {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 15px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 20px 10px;
+  margin-bottom: 15px;
+  border: 2px solid #000;
+}
+
+.infomin div:first-child {
+  order: 2;
+}
+
+.infomin div:last-child {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  font-size: 15px;
+  order: 1;
+  overflow-x: auto;
+}
+
+@media (max-width: 812px) {
+  .infomin div:first-child {
+    order: 1;
+  }
+
+  .infomin div:last-child {
+    order: 2;
+  }
+}
+
+body.dark .infomin {
+  background: #5f5f5f;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.navigation {
+  position: sticky;
+  top: -0.1px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 20px 10px;
+  margin-bottom: 15px;
+  border: 2px solid #000;
+  text-align: center;
+  overflow-x: auto;
+  z-index: 10;
+}
+
+@media (max-width: 812px) {
+  .navigation {
+    padding: 15px 10px;
+  }
+
+  .navigation .nav-menu {
+    margin-bottom: 5px;
+  }
+}
+
+.table-container {
+  background-color: #fff;
+  overflow-x: auto;
+}
+
+body.dark .table-container {
+  background: #5f5f5f;
+  color: #fff;
+}
+
+table {
+  border: 0.15rem solid #000;
+  width: 100%;
+}
+
+body.dark table {
+  border: 2px solid #fff;
+}
+
+table thead {
+  text-align: left;
+  background: #000;
+  color: #fff;
+}
+
+table tbody tr:hover {
+  background: #000;
+  color: #fff;
+}
+
+table tbody tr:hover a {
+  color: #eaeaea;
+}
+
+table tbody tr:hover a:hover {
+  color: #afafaf;
+}
+
+table thead th,
+table tbody td {
+  white-space: nowrap;
+  padding: 0.75rem 0.45rem;
+}
+
+.btn-primary {
+  background: #000;
+  color: #fff !important;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #424242;
+  color: #fff;
+}
+
+.menu {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 15;
+}
+
+.menu label[for=menu] {
+  display: block;
+  width: 140px;
+  text-align: center;
+  user-select: none;
+}
+
+.menu .menu-list {
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  display: none;
+  background-color: #000;
+  padding: 10px 15px;
+  text-align: center;
+  z-index: 15;
+}
+
+.menu .menu-list * {
+  color: #fff !important;
+  cursor: pointer;
+}
+
+.menu #menu:checked + .menu-list {
+  display: flex;
+}
+
+.no-select {
+  user-select: none;
+}
+
+.d-hidden {
+  display: none;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+.text-green {
+  color: #23a723;
+}
+
+.text-red {
+  color: #f62828;
+}
+
+.mb-1 {
+  margin-bottom: 15px;
+}
+
+.ms-auto {
+  margin-left: auto;
+}
