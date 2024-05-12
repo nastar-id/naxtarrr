@@ -164,6 +164,12 @@ body {
   text-align: center;
 }
 
+.jumbotron .logo {
+  mix-blend-mode: color-dodge;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
 .jumbotron h2 {
   font-size: 38px;
   font-family: 'Handlee', cursive;
