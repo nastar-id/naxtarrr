@@ -1,0 +1,176 @@
+* {
+            color: #fff;
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        body {
+            background: #323f5e;
+            margin: 0;
+            padding: 0;
+        }
+
+        .fm-shell {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 24px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #f3f4f6;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .fm-shell h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: 1.8rem;
+        }
+
+        .fm-shell p {
+            margin: 8px 0;
+            color: #d1d5db;
+        }
+
+        .fm-shell a {
+            color: #8b5cf6;
+            text-decoration: none;
+        }
+
+        .fm-shell a:hover {
+            text-decoration: underline;
+        }
+
+        .fm-shell form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin: 12px 0 18px;
+        }
+
+        .fm-shell input[type="text"],
+        .fm-shell input[type="file"],
+        .fm-shell input[type="submit"],
+        .fm-shell textarea {
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            padding: 10px 12px;
+            background: #0f172a;
+            color: #f9fafb;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .fm-shell input[type="submit"] {
+            width: auto;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .fm-shell textarea {
+            width: 100%;
+            min-height: 280px;
+            font-family: Consolas, monospace;
+            resize: vertical;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            overflow: hidden;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .file-table thead,
+        .file-table tbody,
+        .file-table tr,
+        .file-table th,
+        .file-table td {
+            display: block;
+        }
+
+        .file-table thead {
+            display: none;
+        }
+
+        .file-table tr {
+            margin-bottom: 12px;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .file-table td {
+            border: none;
+            border-bottom: 1px solid #374151;
+            padding: 10px 12px;
+        }
+
+        .file-table td:last-child {
+            white-space: normal;
+        }
+
+        .file-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .file-table {
+                display: table;
+            }
+
+            .file-table thead {
+                display: table-header-group;
+            }
+
+            .file-table tbody {
+                display: table-row-group;
+            }
+
+            .file-table tr {
+                display: table-row;
+                margin-bottom: 0;
+                border: 1px solid #374151;
+                background: transparent;
+            }
+
+            .file-table th,
+            .file-table td {
+                display: table-cell;
+                border: 1px solid #374151;
+            }
+
+            .file-table td::before {
+                display: none;
+            }
+
+            .file-table td:last-child {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fm-shell {
+                padding: 16px;
+                margin: 12px;
+            }
+
+            .fm-shell form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .fm-shell input[type="submit"] {
+                width: 100%;
+            }
+        }
