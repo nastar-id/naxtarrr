@@ -98,6 +98,10 @@
             display: none;
         }
 
+        .file-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
         .file-table tr {
             margin-bottom: 12px;
             border: 1px solid #374151;
@@ -173,4 +177,23 @@
             .fm-shell input[type="submit"] {
                 width: 100%;
             }
+        }
+
+        .feedback {
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .feedback.success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #bbf7d0;
+            border: 1px solid rgba(34, 197, 94, 0.35);
+        }
+
+        .feedback.error {
+            background: rgba(248, 113, 113, 0.15);
+            color: #fecaca;
+            border: 1px solid rgba(248, 113, 113, 0.35);
         }
