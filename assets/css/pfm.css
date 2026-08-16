@@ -86,6 +86,10 @@
             display: block;
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
         .file-table thead,
         .file-table tbody,
         .file-table tr,
